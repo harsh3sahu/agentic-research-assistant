@@ -2,3 +2,4 @@ python-dotenv
 langchain_groq
 sentence-transformers
 chromadb
+pypdf

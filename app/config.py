@@ -7,6 +7,7 @@ class Config:
     GROQ_API_KEY = os.getenv("GROQ_API_KEY")
     TAVILY_API_KEY=os.getenv("TAVILY_API_KEY")
     LLM_MODEL=("llama-3.3-70b-versatile")
+    TAVILY_API_KEY=os.getenv("TAVILY_API_KEY")
 
     EMBEDDING_MODEL=("sentence-transformers/all-MiniLM-L6-v2")
 

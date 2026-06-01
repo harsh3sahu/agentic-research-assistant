@@ -14,3 +14,9 @@ class AgentState(TypedDict):
     critique: str
 
     sources: list
+
+    research_tasks:list
+
+    research_findings:str
+
+    report:str

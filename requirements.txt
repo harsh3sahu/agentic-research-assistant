@@ -6,4 +6,6 @@ pypdf
 langchain-text-splitters
 tavily
 langgraph
+streamlit==1.45.1
+
 

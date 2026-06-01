@@ -16,6 +16,4 @@ class ResearchAgent:
             f"\nResearch Agent received query: {query}"
         )
 
-        return self.tool.run(
-            query=query
-        )
+        return self.tool.run(query=query)

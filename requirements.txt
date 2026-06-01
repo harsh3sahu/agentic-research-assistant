@@ -5,3 +5,5 @@ chromadb
 pypdf
 langchain-text-splitters
 tavily
+langgraph
+

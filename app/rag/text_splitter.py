@@ -1,4 +1,3 @@
-from langchain_core.language_models._compat_bridge import chunks_to_events
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from app.config import Config

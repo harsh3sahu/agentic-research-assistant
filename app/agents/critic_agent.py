@@ -1,52 +1,71 @@
+
 from langchain_core.messages import HumanMessage
 from app.agents.llm import llm
 from app.prompts.critic_prompt import CRITIC_PROMPT
 
+import re
+
 
 class CriticAgent:
+
     def __init__(self):
-        self.name=(
-            "Critic Agent"
-        )
+        self.name = "Critic Agent"
 
+    def critique(
+        self,
+        query: str,
+        answer: str,
+        context: str
+    ):
 
-    def critique(self,query:str,answer:str,context:str):
-
-        prompt=(
-            CRITIC_PROMPT.format(query=query,answer=answer,context=context[:6000])
-
+        prompt = CRITIC_PROMPT.format(
+            query=query,
+            answer=answer,
+            context=context[:6000]
         )
 
         try:
-            response=llm.invoke(
+
+            response = llm.invoke(
                 [
-                    HumanMessage(content=prompt)
+                    HumanMessage(
+                        content=prompt
+                    )
                 ]
             )
 
-            critique_text= response.content
-            confidence=0.5
+            critique_text = response.content
 
-            try:
-                if ("CONFIDENCE:" in critique_text):
+            confidence = 0.5
 
-                    confidence_text=critique_text.split("CONFIDENCE:")[1].split("\n")[0].strip()
+            match = re.search(
+                r"CONFIDENCE:\s*([0-9]*\.?[0-9]+)",
+                critique_text,
+                re.IGNORECASE
+            )
 
-                    confidence=float(confidence_text)
+            if match:
+                confidence = float(
+                    match.group(1)
+                )
 
-            except :
-                pass
-
+                critique_text = critique_text.replace(
+                    match.group(0),
+                    ""
+                ).strip()
 
             return {
-                "status":"success",
-                "confidence":confidence,
-                "critique":critique_text
+                "status": "success",
+                "confidence": confidence,
+                "critique": critique_text
             }
 
         except Exception as e:
+
             return {
-                "status":"error",
-                "confidence":0.0,
-                "critique":str(e)
+                "status": "error",
+                "confidence": 0.0,
+                "critique": str(e)
             }
+
+

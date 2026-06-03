@@ -20,3 +20,5 @@ class AgentState(TypedDict):
     research_findings:str
 
     report:str
+
+    mode: str

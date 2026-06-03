@@ -41,9 +41,15 @@ if st.button("research"):
 
         st.success("Research Complete")
         
-        st.subheader("answer")
+        st.subheader("Result")
 
-        st.write(result["answer"])
+        output = (
+            result.get("report")
+            or result.get("answer")
+            or "No output generated."
+        )
+
+        st.write(output)
 
         st.subheader("confidence")
 

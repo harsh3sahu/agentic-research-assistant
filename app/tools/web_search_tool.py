@@ -13,28 +13,40 @@ class WebSearchTool:
 
     def run(self,query:str,max_results:int=5):
 
-        results= self.client.search(
-            query=query,
-            max_results=max_results,
-            search_depth="advanced"
-        )
 
-        context = "\n\n".join(
-            [
-                result["content"]
+        try:
+
+            results= self.client.search(
+                query=query,
+                max_results=max_results,
+                search_depth="advanced"
+            )
+
+            context = "\n\n".join(
+                [
+                    result["content"]
+                    for result in results["results"]
+                ]
+            )
+
+            sources=[
+                {
+                    "title":result.get("title","unknown"),
+                    "url":result.get("url","")
+                }
                 for result in results["results"]
             ]
-        )
 
-        sources=[
-            {
-                "title":result.get("title","unknown"),
-                "url":result.get("url","")
+            return{
+                "context":context,
+                "sources":sources
             }
-            for result in results["results"]
-        ]
 
-        return{
-            "context":context,
-            "sources":sources
-        }
+        except Exception as e:
+
+            print(f"\n Tavily search Error:{e}")
+
+            return {
+                "context":"",
+                "sources":[]
+            }

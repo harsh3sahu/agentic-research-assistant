@@ -17,6 +17,6 @@ class Config:
     CHUNK_SIZE=1000
     CHUNK_OVERLAP=200
     TOP_K=5
-    SCORE_THRESHOLD=0.2
+    SCORE_THRESHOLD=0.5
  
 

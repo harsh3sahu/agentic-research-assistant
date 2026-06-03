@@ -14,4 +14,5 @@ dependencies = [
     "sentence-transformers>=5.5.1",
     "streamlit==1.45.1",
     "tavily>=1.1.0",
+    "torchvision>=0.27.0",
 ]

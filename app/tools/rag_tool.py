@@ -1,4 +1,3 @@
-from torch._inductor.config import score_fusion_memory_threshold
 from app.config import Config
 
 class RAGTool:

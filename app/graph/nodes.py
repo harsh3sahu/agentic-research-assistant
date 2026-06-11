@@ -1,4 +1,4 @@
-from langchain_core.outputs import chat_result
+from torchgen.utils import context
 from app.agents.supervisor_agent import SupervisorAgent
 
 from app.tools.rag_tool import RAGTool
@@ -33,8 +33,10 @@ rag_tool = RAGTool(retriever)
 
 supervisor=SupervisorAgent()
 
+from app.agents.revise_agent import ReviseAgent
 
-#  NODES----------------------------
+revise_agent=ReviseAgent()
+
 
 
 def mode_router_node(state):
@@ -223,6 +225,42 @@ def critic_node(state):
     
 
     return state
+    
+
+
+def revise_node(state):
+
+    answer=state.get("answer","")
+    if not answer:
+        state.get("report","")
+
+    critique=state.get("critique")
+    context=state.get("context")
+    query=state.get("query")
+
+    
+
+    result = revise_agent.revise(
+        query=query,
+        critique=critique,
+        context=context,
+        answer=answer
+
+    )
+
+    revise_count= (state.get("revise_count",0))+1
+
+    print("\n=== REVISED ANSWER ===")
+    print(result)
+    print("============================")
+    print(revise_count)
+
+    state["final_ans"]=result
+    state["revise_count"]=revise_count
+    
+    return state
+
+
     
 
 

@@ -1,15 +1,36 @@
+from pydantic import BaseModel
+from langchain_core.prompts import PromptTemplate
 
-from langchain_core.messages import HumanMessage
 from app.agents.llm import llm
 from app.prompts.critic_prompt import CRITIC_PROMPT
 
-import re
+
+class CriticResponse(BaseModel):
+    confidence: float
+    strengths: list[str]
+    weaknesses: list[str]
+    feedback: str
 
 
 class CriticAgent:
 
     def __init__(self):
         self.name = "Critic Agent"
+
+        self.structured_llm = (
+            llm.with_structured_output(
+                CriticResponse
+            )
+        )
+
+        self.prompt_template = PromptTemplate(
+            template=CRITIC_PROMPT,
+            input_variables=[
+                "query",
+                "answer",
+                "context"
+            ]
+        )
 
     def critique(
         self,
@@ -18,7 +39,7 @@ class CriticAgent:
         context: str
     ):
 
-        prompt = CRITIC_PROMPT.format(
+        prompt = self.prompt_template.format(
             query=query,
             answer=answer,
             context=context[:6000]
@@ -26,37 +47,29 @@ class CriticAgent:
 
         try:
 
-            response = llm.invoke(
-                [
-                    HumanMessage(
-                        content=prompt
-                    )
-                ]
+            result = self.structured_llm.invoke(
+                prompt
             )
 
-            critique_text = response.content
+            # print("======================critique confidence============")
+            print(f"confidence={result.confidence}")
+            # print(f"CONFIDENCE={result.CONFIDENCE}")
+            # print("======================================================")
 
-            confidence = 0.5
+            critique_text = f"""
+STRENGTHS:
+{chr(10).join(f"- {s}" for s in result.strengths)}
 
-            match = re.search(
-                r"CONFIDENCE:\s*([0-9]*\.?[0-9]+)",
-                critique_text,
-                re.IGNORECASE
-            )
+WEAKNESSES:
+{chr(10).join(f"- {w}" for w in result.weaknesses)}
 
-            if match:
-                confidence = float(
-                    match.group(1)
-                )
-
-                critique_text = critique_text.replace(
-                    match.group(0),
-                    ""
-                ).strip()
+FEEDBACK:
+{result.feedback}
+""".strip()
 
             return {
                 "status": "success",
-                "confidence": confidence,
+                "confidence": result.confidence,
                 "critique": critique_text
             }
 
@@ -67,5 +80,3 @@ class CriticAgent:
                 "confidence": 0.0,
                 "critique": str(e)
             }
-
-

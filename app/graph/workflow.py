@@ -2,7 +2,7 @@ from langgraph.graph import StateGraph,END
 
 from app.graph.agent_state import AgentState
 
-from app.graph.nodes import supervisor_node,rag_node,web_node,summarizer_node,critic_node,mode_router_node,planner_node,research_tasks_node,synthesizer_node
+from app.graph.nodes import supervisor_node,rag_node,web_node,summarizer_node,critic_node,mode_router_node,planner_node,research_tasks_node,synthesizer_node,revise_node
 
 workflow = StateGraph(AgentState)
 
@@ -53,6 +53,11 @@ workflow.add_node(
     synthesizer_node
 )
 
+workflow.add_node(
+    "revise",
+    revise_node
+)
+
 workflow.set_entry_point("mode_router")
 
 def mode_decision(state):
@@ -63,6 +68,20 @@ def mode_decision(state):
 def route_decision(state):
     return state["route"]
 
+def critic_decision(state):
+
+    print("\n=== CRITIC ROUTER ===")
+    print("confidence =", state["confidence"])
+    print("retry_count =", state.get("retry_count", 0))
+    print("=====================")
+
+    retry_count=state.get("retry_count",0)
+
+    if state["confidence"] < 0.7 and retry_count < 2: 
+        return "revise"
+
+    return "end"
+
 workflow.add_conditional_edges(
     "mode_router",mode_decision,{
         "qa":"supervisor",
@@ -72,11 +91,23 @@ workflow.add_conditional_edges(
 
 
 
+
 workflow.add_conditional_edges(
     "supervisor",route_decision,
     {
         "rag":"rag",
         "web":"web"
+    }
+)
+
+
+
+workflow.add_conditional_edges(
+    "critic",
+    critic_decision,
+    {
+        "revise": "revise",
+        "end": END
     }
 )
 
@@ -92,6 +123,8 @@ workflow.add_edge("research", "synthesizer")
 
 workflow.add_edge("synthesizer", "critic")
 
-workflow.add_edge("critic",END)
+workflow.add_edge("revise","critic")
+
+
 
 graph = workflow.compile()

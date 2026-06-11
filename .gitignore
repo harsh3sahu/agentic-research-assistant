@@ -6,3 +6,5 @@ chroma_db/
 .pytest_cache/
 .streamlit/
 tests
+practice.ipynb
+

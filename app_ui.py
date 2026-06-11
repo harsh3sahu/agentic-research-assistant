@@ -47,9 +47,20 @@ if st.button("research"):
             result.get("report")
             or result.get("answer")
             or "No output generated."
+            
         )
 
         st.write(output)
+        
+        st.subheader("Revised Answer")
+
+        output2 = (
+            result.get("final_ans")
+            or "No output generated."
+            
+        )
+
+        st.write(output2)
 
         st.subheader("confidence")
 
@@ -65,6 +76,15 @@ if st.button("research"):
         st.subheader("Sources")
 
         sources = result.get("sources",[])
+        unique_sources={}
+
+        for source in sources:
+            file_name=source["source"]
+
+            if file_name not in unique_sources:
+                unique_sources[file_name]=source
+
+        result["sources"]=list(unique_sources.values())
 
         if sources:
             

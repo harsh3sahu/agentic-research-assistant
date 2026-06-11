@@ -22,3 +22,10 @@ class AgentState(TypedDict):
     report:str
 
     mode: str
+
+    retry_count: int
+
+    replan_task:str
+
+    final_ans:str
+

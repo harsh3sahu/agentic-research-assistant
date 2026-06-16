@@ -4,7 +4,13 @@ from pathlib import Path
 import streamlit as st
 
 from app.graph.workflow import graph
+from app.rag.ingestion_pipeline import (
+    ingestion_pipeline
+)
 
+from app.agents.report_agent import (
+    corpus_report_agent
+)
 
 # ==========================================
 # CONFIG
@@ -17,7 +23,6 @@ os.makedirs(
     exist_ok=True
 )
 
-
 # ==========================================
 # PAGE CONFIG
 # ==========================================
@@ -27,7 +32,6 @@ st.set_page_config(
     page_icon="🤖",
     layout="wide"
 )
-
 
 # ==========================================
 # HEADER SECTION
@@ -73,30 +77,41 @@ with right_col:
 
         saved_files = []
 
-        for uploaded_file in uploaded_files:
+        with st.spinner(
+            "Uploading and indexing PDFs..."
+        ):
 
-            save_path = (
-                Path(DATA_DIR)
-                / uploaded_file.name
-            )
+            for uploaded_file in uploaded_files:
 
-            with open(
-                save_path,
-                "wb"
-            ) as f:
-
-                f.write(
-                    uploaded_file.getbuffer()
+                save_path = (
+                    Path(DATA_DIR)
+                    / uploaded_file.name
                 )
 
-            saved_files.append(
-                uploaded_file.name
+                with open(
+                    save_path,
+                    "wb"
+                ) as f:
+
+                    f.write(
+                        uploaded_file.getbuffer()
+                    )
+
+                saved_files.append(
+                    uploaded_file.name
+                )
+
+            # ==================================
+            # INGEST NEW PDFS ONLY
+            # ==================================
+
+            ingestion_pipeline.ingest_folder(
+                DATA_DIR
             )
 
         st.success(
-            f"{len(saved_files)} PDF(s) uploaded successfully."
+            f"{len(saved_files)} PDF(s) uploaded and indexed successfully."
         )
-
 
 # ==========================================
 # AVAILABLE PDFS
@@ -122,9 +137,7 @@ if pdf_files:
                 f"• {pdf.name}"
             )
 
-
 st.divider()
-
 
 # ==========================================
 # QUERY INPUT
@@ -135,10 +148,22 @@ query = st.text_area(
     height=150
 )
 
-
 # ==========================================
 # RESEARCH BUTTON
 # ==========================================
+
+if st.button(
+    "Generate Report From PDFs"
+):
+
+    result = (
+        corpus_report_agent
+        .generate_report()
+    )
+
+    st.write(
+        result["report"]
+    )
 
 if st.button("Research"):
 
@@ -251,7 +276,7 @@ if st.button("Research"):
         for source in sources:
 
             source_name = (
-                source.get("source")
+                source.get("sources")
                 or source.get("title")
                 or "Unknown Source"
             )

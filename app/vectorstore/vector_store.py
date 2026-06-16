@@ -19,6 +19,42 @@ class VectorStore:
 
     def count(self):
         return self.collection.count()
+    
+
+
+    
+    def clear(self):
+
+        ids = self.collection.get()["ids"]
+
+        if ids:
+
+            self.collection.delete(
+                ids=ids
+            )
+
+        print("Vector DB cleared.")
+
+
+    def get_indexed_files(self):
+
+        data = self.collection.get(
+            include=["metadatas"]
+        )
+
+        files = set()
+
+        for metadata in data["metadatas"]:
+
+            if metadata:
+
+                files.add(
+                    metadata.get(
+                        "source_file"
+                    )
+                )
+
+        return files
 
 vector_store=VectorStore()
 

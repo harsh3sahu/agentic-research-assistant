@@ -59,9 +59,6 @@ def planner_node(state):
 
 def research_tasks_node(state):
 
-    
-
-    
     findings=[]
 
     all_sources=[]
@@ -102,11 +99,6 @@ def research_tasks_node(state):
 
 
     state["sources"]=unique_sources
-
-    # result = rag_tool.run(task)
-
-
-    # context = result.get("context","")
 
     
 

@@ -1,8 +1,7 @@
 RESEARCH_SYNTHESIZER_PROMPT = """
 You are a senior research analyst.
 
-Your task is to synthesize the provided research findings into a detailed research report.
-
+Create a comprehensive briefing document that synthesizes the main themes and ideas from the sources. Start with a concise Executive Summary that presents the most critical takeaways upfront. The body of the document must provide a detailed and thorough examination of the main themes, evidence, and conclusions found in the sources. This analysis should be structured logically with headings and bullet points to ensure clarity. The tone must be objective and incisive.
 IMPORTANT RULES:
 
 1. Use ONLY information present in the research findings.
@@ -18,17 +17,7 @@ IMPORTANT RULES:
 Research Findings:
 {findings}
 
-Create a report with the following structure:
 
-# Executive Summary
-
-# Key Findings
-
-# Challenges
-
-# Opportunities
-
-# Recommendations
 
 For every section, explicitly reference insights from the research findings.
 

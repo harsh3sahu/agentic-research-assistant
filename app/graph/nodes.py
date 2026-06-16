@@ -1,5 +1,4 @@
-from torchgen.utils import context
-from app.agents.supervisor_agent import SupervisorAgent
+
 
 from app.tools.rag_tool import RAGTool
 from app.rag.retriever import retriever
@@ -31,7 +30,6 @@ web_tool = WebSearchTool()
 
 rag_tool = RAGTool(retriever)
 
-supervisor=SupervisorAgent()
 
 from app.agents.revise_agent import ReviseAgent
 
@@ -115,34 +113,6 @@ def research_tasks_node(state):
     return state
 
 
-def rag_node(state):
-    task=state["query"]
-
-    result = rag_tool.run(task)
-
-    context = result["context"]
-
-    if len(context.strip()) < 100:
-
-        result = web_tool.run(task)
-
-    state["context"]= result["context"]
-
-    state["sources"]= result["sources"]
-
-    return state
-
-
-
-def web_node(state):
-    result=web_tool.run(state["query"])
-
-    state["context"]=result["context"]
-
-    state["sources"]=result["sources"]
-
-    return state
-
 
 
 
@@ -168,28 +138,16 @@ def synthesizer_node(state):
     
 
 
-def supervisor_node(state):
-
-    route= supervisor.route(
-        state["query"]
-    )
-
-    state["route"]=route
-
-    return state
-
-
-
-
 
 
 def summarizer_node(state):
     result = summarizer.summarize(
         query=state["query"],
-        context=state["context"]
     )
 
     state["answer"]=result.get("summary","")
+    state["context"]=result.get("context","")
+    state["sources"]=result.get("sources","")
 
     return state
 
@@ -199,7 +157,11 @@ def summarizer_node(state):
 
 
 def critic_node(state):
-    answer = state.get("answer","")
+
+
+    answer = state.get("final_ans","")
+    if not answer:
+        answer=state.get("answer","")
     if not answer:
         answer=state.get("report","")
 
@@ -248,15 +210,15 @@ def revise_node(state):
 
     )
 
-    revise_count= (state.get("revise_count",0))+1
+    retry_count= (state.get("retry_count",0))+1
 
     print("\n=== REVISED ANSWER ===")
     print(result)
     print("============================")
-    print(revise_count)
+    print(retry_count)
 
     state["final_ans"]=result
-    state["revise_count"]=revise_count
+    state["revise_count"]=retry_count
     
     return state
 

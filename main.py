@@ -1,6 +1,13 @@
-def main():
-    print("Hello from agentic-research-assistant!")
+from app.graph.workflow import graph
 
+# from IPython.display import Image, display
+# png_data = graph.get_graph().draw_mermaid_png()
 
-if __name__ == "__main__":
-    main()
+# with open("langgraph1updated.png", "wb") as f:
+#     f.write(png_data)
+
+response=graph.invoke({"query":"what is ipl and its winners list"})
+
+print("*"*50)
+print(response["answer"])
+print(response["context"])

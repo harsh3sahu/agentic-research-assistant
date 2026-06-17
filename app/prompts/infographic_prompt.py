@@ -9,15 +9,12 @@ create a very detailed and quality prompt for image generation with high creativ
 Return:
 
 # TITLE
-
 # MAIN THEME
-
-
 # VISUAL ELEMENTS
-
 # COLOR PALETTE
-
 # LAYOUT
+
+
 
 Research Report:
 

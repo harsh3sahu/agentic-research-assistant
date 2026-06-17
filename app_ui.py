@@ -159,23 +159,21 @@ if image_button:
         "Generating infographic..."
     ):
 
-        report_result = (
-            report_agent.generate_report()
-        )
+        with open("report.txt","r",encoding="utf-8") as f:
+            report_result=f.read()
 
-        if (
-            report_result["status"]
-            != "success"
-        ):
+        if len(report_result.strip()) <100:
 
-            st.error(
-                report_result["message"]
+
+            report_result = (
+                report_agent.generate_report()
             )
 
-        else:
-            image= infographic_agent.generate(report_result)
-            st.image(image,
-                caption="Generated Infographic",
-                use_container_width=True)
+
+
+        image= infographic_agent.generate(report_result)
+        st.image(image,caption="Generated Infographic",use_container_width=True)
+
+
 
 

@@ -1,103 +1,209 @@
-agentic-research-assistant/
-
-├── app/
-│
-├── agents/
-│   ├── critic_agent.py
-│   ├── llm.py
-│   ├── mode_router_agent.py
-│   ├── planner_agent.py
-│   ├── research_synthesizer_agent.py
-│   ├── summarizer_agent.py
-│   └── supervisor_agent.py
-│
-├── graph/
-│   ├── agent_state.py
-│   ├── nodes.py
-│   └── workflow.py
-│
-├── prompts/
-│   ├── critic_prompt.py
-│   ├── mode_router_prompt.py
-│   ├── planner_prompt.py
-│   ├── research_synthesizer_prompt.py
-│   ├── summarizer_prompt.py
-│   └── supervisor_prompt.py
-│
-├── rag/
-│   ├── document_loader.py
-│   ├── embedding_manager.py
-│   ├── ingestion_pipeline.py
-│   ├── retriever.py
-│   └── text_splitter.py
-│
-├── schemas/
-│   └── research_plan.py
-│
-├── tools/
-│   ├── rag_tool.py
-│   ├── retrieval_tool.py
-│   └── web_search_tool.py
-│
-├── vectorstore/
-│   ├── chroma_manager.py
-│   └── vector_store.py
-│
-├── config.py
-│
-├── app_ui.py
-├── main.py
-│
-├── chroma_db/
-├── data/
-├── tests/
-│
-├── README.md
-├── requirements.txt
-└── pyproject.toml
-
-
-
-
-# Agentic Research Assistant - Architecture Documentation
+# Agentic Research Assistant V2
 
 ## Overview
 
-A LangGraph-powered multi-agent research assistant that combines Retrieval-Augmented Generation (RAG), web search, planning, synthesis, and self-critique to answer both factual and research-oriented queries.
+Agentic Research Assistant is a production-style GenAI application that combines RAG, multi-step research workflows, corpus-level analysis, report generation, and infographic creation.
 
-## System Components
+The system can:
 
-### UI Layer
+* Answer questions from uploaded PDFs
+* Perform multi-step research workflows
+* Generate comprehensive research reports
+* Create corpus-level summaries across multiple documents
+* Generate infographic blueprints
+* Persist knowledge using ChromaDB
+* Support human-in-the-loop research decisions
+
+---
+
+## Features
+
+### PDF Upload & Ingestion
+
+* Upload multiple PDFs
+* Automatic document ingestion
+* Text chunking
+* Embedding generation
+* ChromaDB storage
+
+### Persistent Knowledge Base
+
+```text
+PDFs
+ ↓
+Chunks
+ ↓
+Embeddings
+ ↓
+ChromaDB
+```
+
+All data is stored in a persistent vector database and remains available across application restarts.
+
+---
+
+### Retrieval-Augmented Generation (RAG)
+
+```text
+Query
+ ↓
+Semantic Search
+ ↓
+Relevant Chunks
+ ↓
+LLM
+ ↓
+Answer
+```
+
+The system retrieves relevant information from uploaded documents before generating responses.
+
+---
+
+### Research Mode
+
+Complex research questions are automatically broken into multiple research tasks and executed across the knowledge base.
+
+Outputs include:
+
+* Research findings
+* Consolidated answers
+* Confidence scores
+* Critique and refinement
+
+---
+
+### Corpus Report Generation
+
+Generate a complete report from all uploaded PDFs without asking a question.
+
+```text
+All PDFs
+ ↓
+Corpus Analysis
+ ↓
+Research Report
+```
+
+Report Sections:
+
+* Executive Summary
+* Main Themes
+* Key Findings
+* Insights
+* Recommendations
+* Conclusion
+
+---
+
+### Hierarchical Summarization
+
+Large document collections are processed using hierarchical summarization.
+
+```text
+Corpus
+ ↓
+Split into Sections
+ ↓
+Parallel Summaries
+ ↓
+Merged Summary
+ ↓
+Final Report
+```
+
+Benefits:
+
+* Lower token consumption
+* Faster processing
+* Better scalability
+* Support for large document collections
+
+---
+
+### Infographic Generation
+
+Generate infographic blueprints from research reports.
+
+Outputs include:
+
+* Title
+* Main Theme
+* Key Insights
+* Key Statistics
+* Visual Elements
+* Layout Suggestions
+
+---
+
+### Human-in-the-Loop Research
+
+When document retrieval is insufficient, users can decide whether to:
+
+* Continue with existing context
+* Expand research using external sources
+
+This provides greater control and transparency over the research process.
+
+---
+
+## Tech Stack
+
+### Backend
+
+* Python 3.11+
+* LangChain
+* LangGraph
+
+### LLMs
+
+* Groq
+* Gemini
+
+### Vector Database
+
+* ChromaDB
+
+### Embeddings
+
+* sentence-transformers/all-MiniLM-L6-v2
+
+### Search
+
+* Tavily
+
+### Frontend
 
 * Streamlit
 
-### Orchestration Layer
+---
 
-* LangGraph
-* AgentState
-* Workflow
+## Project Structure
 
-### Agent Layer
+```text
+app/
 
-* Mode Router Agent
-* Supervisor Agent
-* Planner Agent
-* Summarizer Agent
-* Research Synthesizer Agent
-* Critic Agent
+├── agents/
+├── graph/
+├── rag/
+├── vectorstore/
+├── prompts/
+├── tools/
+└── ui/
+```
 
-### Retrieval Layer
+---
 
-* ChromaDB
-* Sentence Transformers
-* Retriever
-* RAG Tool
-* Tavily Web Search
 
-### Research Workflow
+## Highlights
 
-Mode Router → Planner → Research Tasks → Hybrid Retrieval → Synthesizer → Critic
-
-### QA Workflow
-
-Mode Router → Supervisor → RAG/Web → Summarizer → Critic
+* Agentic AI Architecture
+* LangGraph Workflows
+* Persistent ChromaDB Storage
+* Retrieval-Augmented Generation (RAG)
+* Multi-Step Research Planning
+* Hierarchical Summarization
+* Corpus-Level Intelligence
+* Research Report Generation
+* Infographic Generation
+* Human-in-the-Loop Research

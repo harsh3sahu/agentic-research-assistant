@@ -10,6 +10,7 @@ class Config:
     TAVILY_API_KEY=os.getenv("TAVILY_API_KEY")
     GOOGLE_API_KEY= os.getenv("GOOGLE_API_KEY")
     EMBEDDING_MODEL=("sentence-transformers/all-MiniLM-L6-v2")
+    HF_TOKEN=os.getenv("HF_TOKEN")
 
 
     CHROMA_PATH="./chroma_db"
@@ -18,5 +19,7 @@ class Config:
     CHUNK_OVERLAP=200
     TOP_K=5
     SCORE_THRESHOLD=0.5
+
+    DATA_DIR="data"
  
 

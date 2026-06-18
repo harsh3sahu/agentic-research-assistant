@@ -1,4 +1,4 @@
-from app.graph.workflow import graph
+# from app.graph.workflow import graph
 
 from app.vectorstore.vector_store import vector_store
 
@@ -18,11 +18,26 @@ print(vector_store.count())
 # print(response["answer"])
 # print(response["context"])
 
-results = (
-            vector_store.collection.get(
-                include=["documents"]
-            )
-        )
+# results = (
+#             vector_store.collection.get(
+#                 include=["documents"]
+#             )
+#         )
 
-print(len(results))
+# print(len(results))
 # print(results)
+
+from app.agents.report_agent import report_agent
+
+response=report_agent.generate_report()
+
+print(len(response.get("report","No report generated")))
+
+with open(
+            "report.txt",
+            "w",
+            encoding="utf-8"
+        ) as f:
+            f.write(response.get("report","No report generated"))
+
+print("report saved")

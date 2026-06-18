@@ -1,4 +1,3 @@
-from botocore import model
 from app.agents.llm import llm
 from huggingface_hub import InferenceClient
 from app.config import Config
@@ -41,6 +40,7 @@ class InfographicAgent:
         print("*"*50)
         print(image_prompt_text)
         print("*"*50)
+        return image
 
 
 

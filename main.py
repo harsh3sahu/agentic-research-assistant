@@ -29,15 +29,22 @@ print(vector_store.count())
 
 from app.agents.report_agent import report_agent
 
-response=report_agent.generate_report()
+# response=report_agent.generate_report()
 
-print(len(response.get("report","No report generated")))
+# print(len(response.get("report","No report generated")))
 
-with open(
-            "report.txt",
-            "w",
-            encoding="utf-8"
-        ) as f:
-            f.write(response.get("report","No report generated"))
+# with open(
+#             "report.txt",
+#             "w",
+#             encoding="utf-8"
+#         ) as f:
+#             f.write(response.get("report","No report generated"))
 
-print("report saved")
+# print("report saved")
+
+
+from app.vectorstore.chroma_manager import chroma_manager
+
+print(chroma_manager.collection.metadata)
+# print(type(chroma_manager.collection))
+# print(dir(chroma_manager.collection))

@@ -5,148 +5,88 @@ from app.rag.text_splitter import text_splitter
 from app.vectorstore.vector_store import vector_store
 
 
+
+
+
 class IngestionPipeline:
 
-    def ingest_pdf(self, file_path: str):
 
-        print("="*50)
-        print("Vector Count=")
-        print(vector_store.count())
+    def __init__(self):
+        self.name="Ingestion Pipeline"
 
-        pdf_name = Path(file_path).name
+    def ingest_pdf(self,file_path:str):
 
-        indexed_files = (
-            vector_store.get_indexed_files()
-        )
+        pdf_name=Path(file_path).name
 
-        # =====================================
-        # SKIP IF ALREADY INDEXED
-        # =====================================
+        indexed_files=vector_store.get_indexed_files()
 
         if pdf_name in indexed_files:
 
-            print(
-                f"\nSkipping {pdf_name} "
-                "(already indexed)"
-            )
-
+            # skipping this file and return
             return
+    # loading documents
 
-        print(
-            f"\nLoading PDF: {pdf_name}"
-        )
+        documents=document_loader.load_pdf(file_path)
 
-        # =====================================
-        # LOAD PDF
-        # =====================================
+        # now chunking
 
-        documents = (
-            document_loader.load_pdf(
-                file_path
-            )
-        )
+        chunks=text_splitter.split_documents(documents)
+        
+      
 
-        print(
-            f"Pages Loaded: "
-            f"{len(documents)}"
-        )
-
-        # =====================================
-        # CHUNKING
-        # =====================================
-
-        chunks = (
-            text_splitter.split_documents(
-                documents
-            )
-        )
-
-        print(
-            f"Chunks Created: "
-            f"{len(chunks)}"
-        )
-
-        texts = []
-
-        metadatas = []
-
-        ids = []
-
-        # =====================================
-        # PREPARE DATA
-        # =====================================
+        texts=[]
+        metadatas=[]
+        ids=[]
 
         for index, chunk in enumerate(chunks):
+            texts.append(chunk["content"])
+            metadatas.append(chunk["metadata"])
+            ids.append(f"{pdf_name}_{index}")
 
-            texts.append(
-                chunk["content"]
-            )
 
-            metadatas.append(
-                chunk["metadata"]
-            )
 
-            ids.append(
-                f"{pdf_name}_{index}"
-            )
+        # storing in vector store, the embedding is done by vector store when passed
 
-        # =====================================
-        # STORE IN CHROMA
-        # =====================================
+        vector_store.add_documents(documents=texts,metadatas=metadatas,ids=ids)
 
-        vector_store.add_documents(
-            documents=texts,
-            metadatas=metadatas,
-            ids=ids
-        )
 
-        print(
-            f"Indexed: {pdf_name}"
-        )
 
-        print(
-            f"Total Chunks In DB: "
-            f"{vector_store.count()}"
-        )
 
-    # =========================================
-    # INGEST ALL PDFS IN DATA FOLDER
-    # =========================================
 
-    def ingest_folder(
-        self,
-        folder_path="data"
-    ):
 
-        pdf_files = list(
-            Path(folder_path).glob(
-                "*.pdf"
-            )
-        )
+    def ingest_folder(self,folder_path="data"):
+
+        pdf_files=list(Path(folder_path).glob("*.pdf"))
+
 
         if not pdf_files:
-
-            print(
-                "\nNo PDFs found."
-            )
+            print("No files found")
 
             return
 
-        print(
-            f"\nFound "
-            f"{len(pdf_files)} PDF(s)"
-        )
-
+        
         for pdf_file in pdf_files:
 
-            self.ingest_pdf(
-                str(pdf_file)
-            )
-        print("="*50)
-        print("Vector Count=")
-        print(vector_store.count())
+            self.ingest_pdf(str(pdf_file))
+
+        
+        print("-"*50)
+        print(f"vectorcount = {vector_store.count()}")
 
 
-ingestion_pipeline = (
-    IngestionPipeline()
-)
+
+ingestion_pipeline=IngestionPipeline()
+
+
+
+
+
+
+        
+
+
+
+
+
+
+

@@ -28,6 +28,19 @@ class TextSplitter:
 
             for chunk_id, chunk in enumerate (split_texts):
 
+
+                if len(chunk.split())<50:
+
+                    print(
+                        f"Skipping chunk: "
+                        f"{len(chunk.split())} words"
+                    )
+
+    
+                    continue
+
+                
+
                 chunks.append({
                     "content":chunk,
                     "metadata":{

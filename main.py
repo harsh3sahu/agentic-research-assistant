@@ -1,50 +1,141 @@
-# from app.graph.workflow import graph
+# from app.rag.hybrid_retriever import hybrid_retriever
+
+# results = hybrid_retriever.retrieve(
+#     "impact of msme for women in gujarat"
+# )
+
+# semantic_results = results["semantic"]
+# bm25_results = results["bm25"]
+
+# print("\nSemantic")
+# for doc in semantic_results:
+#     print(doc["id"])
+
+# print("\nBM25")
+# for doc in results["bm25"]:
+#     print(doc["id"])
+
+# print("\nSEMANTIC")
+
+# for doc in semantic_results:
+
+#     print(len(doc["content"]))
+#     print(doc["distance"])
+
+
+
+# for doc in semantic_results[:3]:
+
+#     print("=" * 50)
+
+#     print(doc["content"])
+
+
+# print("\nBM25")
+
+# for doc in bm25_results[:3]:
+
+#     print("=" * 50)
+
+#     print(doc["content"])
+
 
 from app.vectorstore.vector_store import vector_store
 
-# vector_store.count()
-# vector_store.clear()
-print(vector_store.count())
+results = vector_store.collection.get(
+    include=["documents"]
+)
 
-# from IPython.display import Image, display
-# png_data = graph.get_graph().draw_mermaid_png()
+# documents = results["documents"]
 
-# with open("langgraph1updated.png", "wb") as f:
-#     f.write(png_data)
+# lengths = []
 
-# response=graph.invoke({"query":"what is ipl and its winners list"})
+# for i, doc in enumerate(documents):
 
-# print("*"*50)
-# print(response["answer"])
-# print(response["context"])
+#     lengths.append({
+#         "chunk_id": i + 1,
+#         "chars": len(doc),
+#         "words": len(doc.split())
+#     })
 
-# results = (
-#             vector_store.collection.get(
-#                 include=["documents"]
-#             )
-#         )
+# lengths = sorted(
+#     lengths,
+#     key=lambda x: x["words"]
+# )
 
-# print(len(results))
-# print(results)
+# for item in lengths[:20]:
 
-from app.agents.report_agent import report_agent
-
-# response=report_agent.generate_report()
-
-# print(len(response.get("report","No report generated")))
-
-# with open(
-#             "report.txt",
-#             "w",
-#             encoding="utf-8"
-#         ) as f:
-#             f.write(response.get("report","No report generated"))
-
-# print("report saved")
+#     print(item)
 
 
-from app.vectorstore.chroma_manager import chroma_manager
+#     results = vector_store.collection.get(
+#     include=["documents"]
+# )
 
-print(chroma_manager.collection.metadata)
-# print(type(chroma_manager.collection))
-# print(dir(chroma_manager.collection))
+# documents = results["documents"]
+
+# for doc in documents:
+
+#     if len(doc.split()) < 15:
+
+#         print("=" * 80)
+
+#         print(doc)
+
+
+
+
+
+# from app.rag.document_loader import document_loader
+
+# documents = document_loader.load_pdf(
+#     "data/Gujarat-Report-1.pdf"
+# )
+
+# print(len(documents))
+
+# for doc in documents:
+#     print(len(doc["content"]))
+from app.vectorstore.vector_store import vector_store
+
+vector_store.count()
+
+
+
+from app.rag.ingestion_pipeline import ingestion_pipeline
+
+ingestion_pipeline.ingest_folder('data')
+
+from app.vectorstore.vector_store import vector_store
+
+results = vector_store.collection.get(
+    include=["documents"]
+)
+
+documents = results["documents"]
+
+print(f"Total Chunks: {len(documents)}")
+
+print("\nChunk Length Statistics")
+print("=" * 50)
+
+word_counts = [
+    len(doc.split())
+    for doc in documents
+]
+
+print(f"Min Words: {min(word_counts)}")
+print(f"Max Words: {max(word_counts)}")
+print(f"Average Words: {sum(word_counts)/len(word_counts):.2f}")
+
+print("\nAll Chunk Lengths")
+print("=" * 50)
+
+for i, doc in enumerate(documents):
+
+    print(
+        f"Chunk {i+1}: "
+        f"{len(doc.split())} words | "
+        f"{len(doc)} chars"
+    )
+

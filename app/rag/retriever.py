@@ -10,7 +10,7 @@ class Retriever:
         self.embedding_manager = embedding_manager
 
 
-    def retrieve(self,query:str,top_k:int=5, score_threshold:float=0.2):
+    def retrieve(self,query:str,top_k:int=5):
 
         print(f"retrieving for query{query}")
 
@@ -37,17 +37,16 @@ class Retriever:
 
             for i,(doc_id,document,metadata,distance) in enumerate (zip(ids,documents,metadatas,distances)):
 
-                similarity_score=max(0.0,1.0-(distance/2.0))
+                
 
-                if similarity_score>=score_threshold:
-                    retrieved_docs.append({
-                        "id":doc_id,
-                        "content":document,
-                        "metadata":metadata,
-                        "similarity_score":similarity_score,
-                        "distance":distance,
-                        "rank":i+1
-                    })
+                retrieved_docs.append({
+                    "id":doc_id,
+                    "content":document,
+                    "metadata":metadata,
+                    "distance":distance,
+                    "rank":i+1
+                })
+                    
         
 
         return retrieved_docs

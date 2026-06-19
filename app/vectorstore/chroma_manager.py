@@ -10,8 +10,8 @@ class ChromaManager:
         self.collection=(
             self.client.get_or_create_collection(
                 name=Config.COLLECTION_NAME
-                # ,
-                # metadata={ "hnsw:space": "cosine" }
+                ,
+                metadata={ "hnsw:space": "cosine" }
             )
         )
         print(self.collection.metadata)

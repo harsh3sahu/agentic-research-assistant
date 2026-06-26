@@ -15,8 +15,8 @@ class Config:
 
     CHROMA_PATH="./chroma_db"
     COLLECTION_NAME=("research_documents")
-    CHUNK_SIZE=1000
-    CHUNK_OVERLAP=200
+    CHUNK_SIZE=2000
+    CHUNK_OVERLAP=400
     TOP_K=5
     SCORE_THRESHOLD=0.5
 

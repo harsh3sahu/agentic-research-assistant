@@ -1,50 +1,36 @@
-# from app.graph.workflow import graph
+from app.rag.ingestion_pipeline import ingestion_pipeline
+
+ingestion_pipeline.ingest_folder('data')
 
 from app.vectorstore.vector_store import vector_store
 
-# vector_store.count()
-# vector_store.clear()
-print(vector_store.count())
+results = vector_store.collection.get(
+    include=["documents"]
+)
 
-# from IPython.display import Image, display
-# png_data = graph.get_graph().draw_mermaid_png()
+documents = results["documents"]
 
-# with open("langgraph1updated.png", "wb") as f:
-#     f.write(png_data)
+print(f"Total Chunks: {len(documents)}")
 
-# response=graph.invoke({"query":"what is ipl and its winners list"})
+print("\nChunk Length Statistics")
+print("=" * 50)
 
-# print("*"*50)
-# print(response["answer"])
-# print(response["context"])
+word_counts = [
+    len(doc.split())
+    for doc in documents
+]
 
-# results = (
-#             vector_store.collection.get(
-#                 include=["documents"]
-#             )
-#         )
+print(f"Min Words: {min(word_counts)}")
+print(f"Max Words: {max(word_counts)}")
+print(f"Average Words: {sum(word_counts)/len(word_counts):.2f}")
 
-# print(len(results))
-# print(results)
+print("\nAll Chunk Lengths")
+print("=" * 50)
 
-from app.agents.report_agent import report_agent
+for i, doc in enumerate(documents):
 
-# response=report_agent.generate_report()
-
-# print(len(response.get("report","No report generated")))
-
-# with open(
-#             "report.txt",
-#             "w",
-#             encoding="utf-8"
-#         ) as f:
-#             f.write(response.get("report","No report generated"))
-
-# print("report saved")
-
-
-from app.vectorstore.chroma_manager import chroma_manager
-
-print(chroma_manager.collection.metadata)
-# print(type(chroma_manager.collection))
-# print(dir(chroma_manager.collection))
+    print(
+        f"Chunk {i+1}: "
+        f"{len(doc.split())} words | "
+        f"{len(doc)} chars"
+    )
